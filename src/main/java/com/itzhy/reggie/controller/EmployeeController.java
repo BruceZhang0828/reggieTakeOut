@@ -51,4 +51,16 @@ public class EmployeeController {
         request.getSession().setAttribute("employee", one.getId());
         return R.success(one);
     }
+    /**
+     * @Description: 登录后退出功能
+     * @Author: zhy
+     * @Date: 2022/10/16 10:26
+     * @Param:  [request]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PostMapping("/logout")
+    public R<String> logout(HttpServletRequest request) {
+        request.getSession().removeAttribute("employee");
+        return R.success("退出登录。");
+    }
 }
