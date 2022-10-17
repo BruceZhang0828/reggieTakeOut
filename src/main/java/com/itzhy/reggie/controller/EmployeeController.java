@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author zhy
@@ -62,5 +64,28 @@ public class EmployeeController {
     public R<String> logout(HttpServletRequest request) {
         request.getSession().removeAttribute("employee");
         return R.success("退出登录。");
+    }
+
+    /**
+     * @Description: 新增员工服务
+     * @Author: zhy
+     * @Date: 2022/10/16 21:31
+     * @Param:  [request, employee]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
+        log.info("新增员工信息，{}", employee.toString());
+        // 设置初始密码123456，需要进行md5加密
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        //
+        LocalDateTime now = LocalDateTime.now();
+        employee.setCreateTime(now);
+        employee.setUpdateTime(now);
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+        employeeService.save(employee);
+        return R.success("新增员工成功！");
     }
 }
