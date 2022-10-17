@@ -1,16 +1,15 @@
 package com.itzhy.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itzhy.reggie.common.R;
 import com.itzhy.reggie.entity.Employee;
 import com.itzhy.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -53,11 +52,12 @@ public class EmployeeController {
         request.getSession().setAttribute("employee", one.getId());
         return R.success(one);
     }
+
     /**
      * @Description: 登录后退出功能
      * @Author: zhy
      * @Date: 2022/10/16 10:26
-     * @Param:  [request]
+     * @Param: [request]
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @PostMapping("/logout")
@@ -70,7 +70,7 @@ public class EmployeeController {
      * @Description: 新增员工服务
      * @Author: zhy
      * @Date: 2022/10/16 21:31
-     * @Param:  [request, employee]
+     * @Param: [request, employee]
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @PostMapping
@@ -87,5 +87,19 @@ public class EmployeeController {
         employee.setUpdateUser(empId);
         employeeService.save(employee);
         return R.success("新增员工成功！");
+    }
+
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        // 构造分页器
+        Page<Employee> pageInfo = new Page<>(page, pageSize);
+        // 构造条件构造器
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotBlank(name), Employee::getName, name);
+        // 添加排序条件
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+        employeeService.page(pageInfo, queryWrapper);
+        return R.success(pageInfo);
+
     }
 }
