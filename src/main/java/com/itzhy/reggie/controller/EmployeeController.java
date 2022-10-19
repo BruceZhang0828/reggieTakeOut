@@ -102,4 +102,20 @@ public class EmployeeController {
         return R.success(pageInfo);
 
     }
+    /**
+     * @Description: 根据ID修改员工信息
+     * @Author: zhy
+     * @Date: 2022/10/19 14:41
+     * @Param:  [employee]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee) {
+        log.info(employee.toString());
+        Long empId = (Long)request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(empId);
+        employeeService.updateById(employee);
+        return R.success("修改成功。");
+    }
 }
