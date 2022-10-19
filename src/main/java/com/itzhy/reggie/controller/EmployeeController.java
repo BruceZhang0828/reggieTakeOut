@@ -76,15 +76,10 @@ public class EmployeeController {
     @PostMapping
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("新增员工信息，{}", employee.toString());
+        log.info("save:当前线程id{}", Thread.currentThread().getId());
         // 设置初始密码123456，需要进行md5加密
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         //
-        LocalDateTime now = LocalDateTime.now();
-        employee.setCreateTime(now);
-        employee.setUpdateTime(now);
-        Long empId = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
         employeeService.save(employee);
         return R.success("新增员工成功！");
     }
@@ -113,9 +108,7 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
-        Long empId = (Long) request.getSession().getAttribute("employee");
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(empId);
+        log.info("update:当前线程id{}", Thread.currentThread().getId());
         employeeService.updateById(employee);
         return R.success("修改成功。");
     }

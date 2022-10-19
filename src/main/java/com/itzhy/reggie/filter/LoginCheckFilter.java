@@ -1,6 +1,7 @@
 package com.itzhy.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.itzhy.reggie.common.BaseContent;
 import com.itzhy.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -29,6 +30,7 @@ public class LoginCheckFilter implements Filter {
         // 1 获取本次请求uri
         String requestURI = request.getRequestURI();
         log.info("拦截到的请求，{}", requestURI);
+        log.info("loginCheckFilter:当前线程id{}", Thread.currentThread().getId());
         String[] urls = new String[]{
                 "/employee/login",
                 "/employee/logout",
@@ -46,6 +48,7 @@ public class LoginCheckFilter implements Filter {
         // 4 如果登录直接放行
         if (request.getSession().getAttribute("employee") != null) {
             log.info("用户已经登录，用户id为：{}", request.getSession().getAttribute("employee"));
+            BaseContent.setCurId((Long) request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
             return;
         }
