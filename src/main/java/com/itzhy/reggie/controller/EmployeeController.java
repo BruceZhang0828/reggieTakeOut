@@ -102,20 +102,38 @@ public class EmployeeController {
         return R.success(pageInfo);
 
     }
+
     /**
      * @Description: 根据ID修改员工信息
      * @Author: zhy
      * @Date: 2022/10/19 14:41
-     * @Param:  [employee]
+     * @Param: [employee]
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @PutMapping
-    public R<String> update(HttpServletRequest request,@RequestBody Employee employee) {
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
-        Long empId = (Long)request.getSession().getAttribute("employee");
+        Long empId = (Long) request.getSession().getAttribute("employee");
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser(empId);
         employeeService.updateById(employee);
         return R.success("修改成功。");
+    }
+
+    /**
+     * @Description: 根据员工id查询员工信息
+     * @Author: zhy
+     * @Date: 2022/10/19 15:51
+     * @Param: [id]
+     * @return: com.itzhy.reggie.common.R<com.itzhy.reggie.entity.Employee>
+     */
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id) {
+        log.info("根据id查询员工信息。。。");
+        Employee employee = employeeService.getById(id);
+        if (employee != null) {
+            return R.success(employee);
+        }
+        return R.error("没有查询到对应的员工信息。");
     }
 }
