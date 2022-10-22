@@ -38,4 +38,17 @@ public class GlobalExceptionHandler {
         }
         return R.error("未知错误！");
     }
+    /**
+     * @Description: CustomException异常处理
+     * @Author: zhy
+     * @Date: 2022/10/22 14:50
+     * @Param:  [exception]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @ExceptionHandler(CustomException.class)
+    public R<String> customExceptionHandler(CustomException exception) {
+        log.info("拦截异常处理数据");
+        String exceptionMsg = exception.getMessage();
+        return R.error(exceptionMsg);
+    }
 }
