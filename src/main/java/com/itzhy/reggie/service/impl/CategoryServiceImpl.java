@@ -31,14 +31,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public void deleteById(Long id) {
         LambdaQueryWrapper<Dish> queryWrapper1 = new LambdaQueryWrapper<>();
-        queryWrapper1.eq(Dish::getCategoryId,id);
+        queryWrapper1.eq(Dish::getCategoryId, id);
         int count1 = dishService.count(queryWrapper1);
         if (count1 > 0) {
             // 分类关联了相关的菜品
             throw new CustomException("该分类已经关联相关菜品");
         }
         LambdaQueryWrapper<Setmeal> queryWrapper2 = new LambdaQueryWrapper<>();
-        queryWrapper2.eq(Setmeal::getCategoryId,id);
+        queryWrapper2.eq(Setmeal::getCategoryId, id);
         int count2 = setmealService.count(queryWrapper2);
         if (count2 > 0) {
             // 分类关联了相关的套餐

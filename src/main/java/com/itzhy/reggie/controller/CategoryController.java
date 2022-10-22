@@ -44,13 +44,28 @@ public class CategoryController {
      * @Description: 删除分类
      * @Author: zhy
      * @Date: 2022/10/21 22:50
-     * @Param:  [ids]
+     * @Param: [ids]
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @DeleteMapping
     public R<String> deleteById(Long ids) {
-        log.info("删除的分类id为：{}",ids);
+        log.info("删除的分类id为：{}", ids);
         categoryService.deleteById(ids);
         return R.success("删除分类成功。");
+    }
+
+
+    /**
+     * @Description: 修改分类
+     * @Author: zhy
+     * @Date: 2022/10/22 15:10
+     * @Param: [category]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PutMapping
+    public R<String> update(@RequestBody Category category) {
+        log.info("修改分类id为：{}", category.getId());
+        categoryService.updateById(category);
+        return R.success("修改分类成功");
     }
 }
