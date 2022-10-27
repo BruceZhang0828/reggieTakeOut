@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author zhy
  * @description 分类业务处理类
@@ -40,6 +42,7 @@ public class CategoryController {
         categoryService.page(pageInfo, queryWrapper);
         return R.success(pageInfo);
     }
+
     /**
      * @Description: 删除分类
      * @Author: zhy
@@ -67,5 +70,14 @@ public class CategoryController {
         log.info("修改分类id为：{}", category.getId());
         categoryService.updateById(category);
         return R.success("修改分类成功");
+    }
+
+    @GetMapping("/list")
+    public R<List> list(Category category) {
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(Category::getType,category.getType());
+        queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+        List<Category> list = categoryService.list(queryWrapper);
+        return R.success(list);
     }
 }
