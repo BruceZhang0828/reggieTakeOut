@@ -22,12 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DishController {
     @Autowired
     private DishService dishService;
-    @Autowired
-    private DishFlavorService dishFlavorService;
 
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto) {
         log.info(dishDto.toString());
-        return null;
+        dishService.saveWithFlavor(dishDto);
+        return R.success("菜品保存成功。");
     }
 }
