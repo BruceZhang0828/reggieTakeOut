@@ -12,4 +12,6 @@ import com.itzhy.reggie.entity.Dish;
 public interface DishService extends IService<Dish> {
     // 保存数据
     void saveWithFlavor(DishDto dishDto);
+
+    DishDto getByIdWithFlavor(long id);
 }

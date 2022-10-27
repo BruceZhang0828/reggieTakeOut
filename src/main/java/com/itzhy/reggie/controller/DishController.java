@@ -72,4 +72,10 @@ public class DishController {
         dishDtoPage.setRecords(dishDtoList);
         return R.success(dishDtoPage);
     }
+    // 根据id查询菜品记录详情
+    @GetMapping("/{id}")
+    public R<DishDto> getById(@PathVariable  long id) {
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
 }
