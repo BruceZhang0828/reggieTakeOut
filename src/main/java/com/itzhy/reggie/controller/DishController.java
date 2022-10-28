@@ -72,10 +72,59 @@ public class DishController {
         dishDtoPage.setRecords(dishDtoList);
         return R.success(dishDtoPage);
     }
-    // 根据id查询菜品记录详情
+
+    /**
+     * @Description: 根据id查询菜品记录详情
+     * @Author: zhy
+     * @Date: 2022/10/28 10:05
+     * @Param: [id]
+     * @return: com.itzhy.reggie.common.R<com.itzhy.reggie.dto.DishDto>
+     */
     @GetMapping("/{id}")
-    public R<DishDto> getById(@PathVariable  long id) {
+    public R<DishDto> getById(@PathVariable long id) {
         DishDto dishDto = dishService.getByIdWithFlavor(id);
         return R.success(dishDto);
+    }
+
+    /**
+     * @Description: 修改菜品数据
+     * @Author: zhy
+     * @Date: 2022/10/28 10:05
+     * @Param: [dishDto]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto) {
+        dishService.updateWithFlavor(dishDto);
+        return R.success("修改成功");
+    }
+
+    /**
+     * @Description: 起售和停售
+     * @Author: zhy
+     * @Date: 2022/10/28 10:05
+     * @Param: [status, ids]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PostMapping("/status/{status}")
+    public R<String> status(@PathVariable int status, long ids) {
+        Dish dish = new Dish();
+        dish.setId(ids);
+        dish.setStatus(status);
+        // 更新数据
+        dishService.updateById(dish);
+        return R.success("菜品数据更新成功");
+    }
+    /**
+     * @Description: 删除
+     * @Author: zhy
+     * @Date: 2022/10/28 10:18
+     * @Param:  [ids]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @DeleteMapping
+    public R<String> delete(String ids) {
+        dishService.removeById(ids);
+        return R.success("删除成功");
     }
 }
