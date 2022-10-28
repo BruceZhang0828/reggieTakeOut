@@ -115,16 +115,35 @@ public class DishController {
         dishService.updateById(dish);
         return R.success("菜品数据更新成功");
     }
+
     /**
      * @Description: 删除
      * @Author: zhy
      * @Date: 2022/10/28 10:18
-     * @Param:  [ids]
+     * @Param: [ids]
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @DeleteMapping
     public R<String> delete(String ids) {
         dishService.removeById(ids);
         return R.success("删除成功");
+    }
+    /**
+     * @Description: 根据条件查询菜品数据
+     * @Author: zhy
+     * @Date: 2022/10/28 15:35
+     * @Param:  [dish]
+     * @return: com.itzhy.reggie.common.R<java.util.List<com.itzhy.reggie.entity.Dish>>
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish) {
+        // 构建查询条件
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        Long categoryId = dish.getCategoryId();
+        queryWrapper.eq(categoryId !=null,Dish::getCategoryId, categoryId);
+        // 起售状态
+        queryWrapper.eq(Dish::getStatus,1);
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
     }
 }
