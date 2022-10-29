@@ -71,6 +71,30 @@ public class SetmealController {
         dtoPage.setRecords(setmealDtos);
         return R.success(dtoPage);
     }
+    /**
+     * @Description: 根据id获取数据
+     * @Author: zhy
+     * @Date: 2022/10/29 11:13
+     * @Param:  [id]
+     * @return: com.itzhy.reggie.common.R<com.itzhy.reggie.dto.SetmealDto>
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getById(@PathVariable long id) {
+        SetmealDto setmealDto = setmealService.getByIdWithDish(id);
+        return R.success(setmealDto);
+    }
+    /**
+     * @Description: 更新数据
+     * @Author: zhy
+     * @Date: 2022/10/29 11:13
+     * @Param:  []
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto) {
+        setmealService.updateWithDish(setmealDto);
+        return R.success("更新操作完成");
+    }
 
     /**
      * @Description: 删除套餐及其关联数据
