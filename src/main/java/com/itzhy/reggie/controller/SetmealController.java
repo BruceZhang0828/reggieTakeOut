@@ -130,4 +130,14 @@ public class SetmealController {
         setmealService.updateBatchById(setmeals);
         return R.success("菜品数据更新成功");
     }
+
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(long categoryId,int status) {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Setmeal::getCategoryId,categoryId);
+        queryWrapper.eq(Setmeal::getStatus,status);
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> list = setmealService.list(queryWrapper);
+        return R.success(list);
+    }
 }
