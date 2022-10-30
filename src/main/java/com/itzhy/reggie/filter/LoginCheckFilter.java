@@ -37,6 +37,8 @@ public class LoginCheckFilter implements Filter {
                 "/backend/**",
                 "/front/**",
                 "/common/**",
+                "/user/sendMsg",
+                "/user/login",
         };
         // 2 判断本次请求是否需要处理
         boolean check = check(requestURI, urls);
@@ -50,6 +52,13 @@ public class LoginCheckFilter implements Filter {
         if (request.getSession().getAttribute("employee") != null) {
             log.info("用户已经登录，用户id为：{}", request.getSession().getAttribute("employee"));
             BaseContent.setCurId((Long) request.getSession().getAttribute("employee"));
+            filterChain.doFilter(request, response);
+            return;
+        }
+        // 4 如果登录直接放行
+        if (request.getSession().getAttribute("user") != null) {
+            log.info("用户已经登录，用户id为：{}", request.getSession().getAttribute("user"));
+            BaseContent.setCurId((Long) request.getSession().getAttribute("user"));
             filterChain.doFilter(request, response);
             return;
         }
