@@ -6,6 +6,7 @@ import com.itzhy.reggie.common.R;
 import com.itzhy.reggie.dto.DishDto;
 import com.itzhy.reggie.entity.Category;
 import com.itzhy.reggie.entity.Dish;
+import com.itzhy.reggie.entity.DishFlavor;
 import com.itzhy.reggie.service.CategoryService;
 import com.itzhy.reggie.service.DishFlavorService;
 import com.itzhy.reggie.service.DishService;
@@ -32,6 +33,9 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private DishFlavorService  dishFlavorService;
 
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto) {
@@ -136,7 +140,7 @@ public class DishController {
      * @return: com.itzhy.reggie.common.R<java.util.List<com.itzhy.reggie.entity.Dish>>
      */
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) {
         // 构建查询条件
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         Long categoryId = dish.getCategoryId();
@@ -144,6 +148,23 @@ public class DishController {
         // 起售状态
         queryWrapper.eq(Dish::getStatus,1);
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+        // 将dish转为dishDto
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            // 查询分类信息
+            Category category = categoryService.getById(categoryId);
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            // 查询
+            Long id = item.getId();
+            LambdaQueryWrapper<DishFlavor> flavorQueryWrapper = new LambdaQueryWrapper<DishFlavor>();
+            flavorQueryWrapper.eq(DishFlavor::getDishId,id);
+            List<DishFlavor> dishFlavors = dishFlavorService.list(flavorQueryWrapper);
+            dishDto.setFlavors(dishFlavors);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dishDtoList);
     }
 }
