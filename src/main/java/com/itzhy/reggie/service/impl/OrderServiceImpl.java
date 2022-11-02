@@ -2,12 +2,15 @@ package com.itzhy.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itzhy.reggie.common.BaseContent;
 import com.itzhy.reggie.common.CustomException;
+import com.itzhy.reggie.dto.OrderDto;
 import com.itzhy.reggie.entity.*;
 import com.itzhy.reggie.mapper.OrdersMapper;
 import com.itzhy.reggie.service.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,5 +105,41 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderDetailService.saveBatch(orderDetails);
         // 清空购物车
         shoppingCartService.remove(queryWrapper);
+    }
+
+    /**
+     * @Description: 查询分页信息
+     * @Author: zhy
+     * @Date: 2022/11/2 10:44
+     * @Param: [page, pageSize]
+     * @return: com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.itzhy.reggie.dto.OrderDto>
+     */
+    @Override
+    public Page<OrderDto> getPage(int page, int pageSize) {
+        // 构建分页查询
+        Page<Orders> pageInfo = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Orders::getUserId, BaseContent.getCurId());
+        queryWrapper.orderByDesc(Orders::getOrderTime);
+        // 查询订单分页
+        this.page(pageInfo, queryWrapper);
+        Page<OrderDto> orderDtoPage = new Page<>();
+        // 转化为OrderDto的分页
+        BeanUtils.copyProperties(pageInfo, orderDtoPage, "records");
+        List<Orders> records = pageInfo.getRecords();
+        // 构建OrderDto的分页中的records记录
+        List<OrderDto> orderDtos = records.stream().map((item) -> {
+            OrderDto orderDto = new OrderDto();
+            BeanUtils.copyProperties(item, orderDto);
+            Long id = orderDto.getId();
+            // 查询对应的订单详情
+            LambdaQueryWrapper<OrderDetail> detailQueryWrapper = new LambdaQueryWrapper<>();
+            detailQueryWrapper.eq(OrderDetail::getOrderId, id);
+            List<OrderDetail> list = orderDetailService.list(detailQueryWrapper);
+            orderDto.setOrderDetails(list);
+            return orderDto;
+        }).collect(Collectors.toList());
+        orderDtoPage.setRecords(orderDtos);
+        return orderDtoPage;
     }
 }

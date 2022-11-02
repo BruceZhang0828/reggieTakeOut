@@ -1,6 +1,8 @@
 package com.itzhy.reggie.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.itzhy.reggie.dto.OrderDto;
 import com.itzhy.reggie.entity.Orders;
 
 /**
@@ -10,4 +12,6 @@ import com.itzhy.reggie.entity.Orders;
  **/
 public interface OrdersService extends IService<Orders> {
     void submit(Orders orders);
+
+    Page<OrderDto> getPage(int page, int pageSize);
 }
