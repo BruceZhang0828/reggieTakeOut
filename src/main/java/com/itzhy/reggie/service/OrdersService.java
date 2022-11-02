@@ -9,4 +9,5 @@ import com.itzhy.reggie.entity.Orders;
  * @date 2022/11/01 23:15
  **/
 public interface OrdersService extends IService<Orders> {
+    void submit(Orders orders);
 }

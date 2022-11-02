@@ -20,9 +20,16 @@ public class OrdersController {
 
     @Autowired
     private OrdersService ordersService;
-
+    /**
+     * @Description: 下单操作
+     * @Author: zhy
+     * @Date: 2022/11/2 9:53
+     * @Param:  [orders]
+     * @return: com.itzhy.reggie.common.R<java.lang.String>
+     */
     @PostMapping("/submit")
     public R<String> submit(@RequestBody Orders orders) {
-        return null;
+        ordersService.submit(orders);
+        return R.success("下单成功。");
     }
 }
