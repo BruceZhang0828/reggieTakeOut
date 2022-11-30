@@ -30,4 +30,8 @@ hs_err_pid*
 .idea/jarRepositories.xml
 .idea/misc.xml
 reggie_take_out.iml
-
+.idea/vcs.xml
+target/classes/application.yml
+target/classes/backend/
+target/classes/front/
+target/generated-sources/
