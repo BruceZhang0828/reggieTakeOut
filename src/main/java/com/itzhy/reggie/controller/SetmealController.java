@@ -12,6 +12,8 @@ import com.itzhy.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,7 @@ public class SetmealController {
     private CategoryService categoryService;
 
     @PostMapping
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         setmealService.saveWithDish(setmealDto);
         return R.success("保存成功");
@@ -71,11 +74,12 @@ public class SetmealController {
         dtoPage.setRecords(setmealDtos);
         return R.success(dtoPage);
     }
+
     /**
      * @Description: 根据id获取数据
      * @Author: zhy
      * @Date: 2022/10/29 11:13
-     * @Param:  [id]
+     * @Param: [id]
      * @return: com.itzhy.reggie.common.R<com.itzhy.reggie.dto.SetmealDto>
      */
     @GetMapping("/{id}")
@@ -83,11 +87,12 @@ public class SetmealController {
         SetmealDto setmealDto = setmealService.getByIdWithDish(id);
         return R.success(setmealDto);
     }
+
     /**
      * @Description: 更新数据
      * @Author: zhy
      * @Date: 2022/10/29 11:13
-     * @Param:  []
+     * @Param: []
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @PutMapping
@@ -104,6 +109,8 @@ public class SetmealController {
      * @return: com.itzhy.reggie.common.R<java.lang.String>
      */
     @DeleteMapping
+    // 清空：allEntries = true
+    @CacheEvict(value = "setmealCache", allEntries = true)
     public R<String> delete(@RequestParam List<Long> ids) {
         setmealService.deleteWithDish(ids);
         return R.success("删除成功");
@@ -131,11 +138,12 @@ public class SetmealController {
         return R.success("菜品数据更新成功");
     }
 
+    @Cacheable(value = "setmealCache", key = "#categoryId+'_'+#status")
     @GetMapping("/list")
-    public R<List<Setmeal>> list(long categoryId,int status) {
+    public R<List<Setmeal>> list(long categoryId, int status) {
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Setmeal::getCategoryId,categoryId);
-        queryWrapper.eq(Setmeal::getStatus,status);
+        queryWrapper.eq(Setmeal::getCategoryId, categoryId);
+        queryWrapper.eq(Setmeal::getStatus, status);
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
         List<Setmeal> list = setmealService.list(queryWrapper);
         return R.success(list);
